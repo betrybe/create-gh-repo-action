@@ -11,11 +11,11 @@ Usada quando uma nova aplicação é criada no https://github.com/betrybe/infras
   - `production`
   - `preview-app`
 - Cria os workflows de CD (delivery & deployment)
-  - `build-sync.yaml`
-  - `staging.yaml`
-  - `homologation.yaml`
-  - `preview-apps.yaml`
-  - `production.yaml`
+  - `.github/workflows/build-sync.yaml`
+  - `.github/workflows/staging.yaml`
+  - `.github/workflows/homologation.yaml`
+  - `.github/workflows/preview-apps.yaml`
+  - `.github/workflows/production.yaml`
 
 
 ## Development

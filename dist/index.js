@@ -16283,8 +16283,8 @@ const core = __nccwpck_require__(2186);
 const github = __nccwpck_require__(5438);
 const axios = __nccwpck_require__(8757);
 
-const repo = github.context.payload.repository.owner.login;
-const owner = core.getInput('repo_name');
+const owner = github.context.payload.repository.owner.login;
+const repo = core.getInput('repo_name');
 const ghToken = core.getInput('admin_token');
 const techOpsUser = {
   name: 'trybe-tech-ops',
@@ -16297,8 +16297,8 @@ client.Credentials = tokenAuth
 
 createEnv = async (environment) => {
   await octokit.rest.repos.createOrUpdateEnvironment({
-    repo,
     owner,
+    repo,
     environment,
     deployment_branch_policy: null
   })
@@ -16307,7 +16307,7 @@ createEnv = async (environment) => {
 cloneFile = async (path, message) => {
   const fileContent = await octokit.rest.repos.getContent({
     owner,
-    repo,
+    repo: 'infrastructure-templates',
     path,
     ref: 'main'
   });
@@ -16365,8 +16365,8 @@ axios({
     'Cria o workflow do CD de homologation'
   )
   await cloneFile(
-    `.github/workflows/preview-app.yaml`,
-    'Cria o workflow do CD de preview-app'
+    `.github/workflows/preview-apps.yaml`,
+    'Cria o workflow do CD de preview-apps'
   )
 })
 .catch(function (error) {
