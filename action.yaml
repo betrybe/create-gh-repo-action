@@ -1,6 +1,6 @@
 
 name: 'Create Github Repository'
-description: 'Create repo with 3 envs (production, staging, homologation, preview-app) and the CD workflows files'
+description: 'Create repo with 4 envs (production, staging, homologation, preview-app) and the CD workflows files'
 branding:
   icon: 'folder-plus'
   color: 'blue'
