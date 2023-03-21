@@ -1,0 +1,24 @@
+
+name: 'Create Github Repository'
+description: 'Create repo with 3 envs (production, staging, homologation, preview-app) and the CD workflows files'
+branding:
+  icon: 'folder-plus'
+  color: 'blue'
+
+inputs:
+  repo_name:
+    description: 'What is the name of the repository?'
+    required: true
+    default: ''
+  admin_token:
+    description: 'Organization admin token with admin:org scope'
+    required: true
+    default: ''
+
+outputs:
+  repo_url:
+    description: 'URL of the created repository'
+
+runs:
+  using: 'node16'
+  main: 'dist/index.js'

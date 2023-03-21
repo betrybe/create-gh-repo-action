@@ -1,0 +1,26 @@
+{
+  "name": "create-gh-repo-action",
+  "version": "1.0.0",
+  "description": "Action that creates a Github repo with 4 default environments and the CD workflow files",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/betrybe/create-gh-repo-action.git"
+  },
+  "author": "betrybe",
+  "license": "ISC",
+  "scripts": {
+    "pack": "ncc build index.js -o dist",
+    "preinstall": "git config core.hooksPath .githooks"
+  },
+  "homepage": "https://github.com/betrybe/create-gh-repo-action#readme",
+  "dependencies": {
+    "@actions/core": "^1.10.0",
+    "@actions/github": "^5.1.1",
+    "axios": "^1.3.4",
+    "octokit": "^2.0.14"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.36.1"
+  }
+}
