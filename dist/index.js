@@ -16290,9 +16290,8 @@ const techOpsUser = {
   name: 'trybe-tech-ops',
   email: 'trybe-tech-ops@users.noreply.github.com'
 }
-
-var client = new GitHubClient(new ProductHeaderValue("create-gh-repo-actions"))
-var tokenAuth = new Credentials(ghToken)
+const client = new GitHubClient(new ProductHeaderValue("create-gh-repo-actions"))
+const tokenAuth = new Credentials(ghToken)
 client.Credentials = tokenAuth
 
 createEnv = async (environment) => {
