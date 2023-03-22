@@ -1,12 +1,10 @@
-const core = require('@actions/core');
-const github = require('@actions/github');
-const axios = require('axios');
+const core = require('@actions/core')
+const github = require('@actions/github')
 const { Octokit } = require('@octokit/rest')
-const { createTokenAuth } = require('@octokit/auth-token')
 
 // Inputs
-const repo = core.getInput('repo_name');
-const ghToken = core.getInput('admin_token');
+const repo = core.getInput('repo_name')
+const ghToken = core.getInput('admin_token')
 
 // Fixed
 const owner = github.context.payload.repository.owner.login;
@@ -43,28 +41,18 @@ const cloneFile = async (octokit, path, message) => {
   })
 }
 
-const createRepoRequest = async () => {
-  const res = await axios({
-    method: 'post',
-    url: `https://api.github.com/orgs/${repo}/repos`,
-    headers: {
-      'Accept': 'application/vnd.github.v3+json',
-      'Authorization': `token ${ghToken}`,
-      'Content-Type': 'application/json'
-    },
-    data: JSON.stringify(
-      {
-        "name": owner,
-        "private": true,
-        "visibility": "private"
-      }
-    )
-  })
+const createRepoRequest = async (octokit) => {
+  await octokit.request(
+    `POST /https://api.github.com/orgs/${repo}/repos`,
+    {
+      "name": owner,
+      "private": true,
+      "visibility": "private"
+    }
+  )
 
-  console.log('Request reponse', res)
-
-  console.log(`Repo ${repo}/${owner} created successfully!`);
-  core.setOutput("repo_url", `https://github.com/${repo}/${owner}`);
+  console.log(`Repo ${owner}/${repo} created successfully!`);
+  core.setOutput("repo_url", `https://github.com/${owner}/${repo}`);
 }
 
 const createEnvs = async (octokit) => {
@@ -102,13 +90,11 @@ const createWorkflowFiles = async (octokit) => {
 }
 
 const run = async () => {
-  const auth = createTokenAuth(ghToken)
-  const octokit = new Octokit()
-  octokit.auth = auth;
+  const octokit = new Octokit({auth: ghToken})
 
-  createRepoRequest(octokit)
-  createEnvs(octokit)
-  createWorkflowFiles(octokit)
+  await createRepoRequest(octokit)
+  await createEnvs(octokit)
+  await createWorkflowFiles(octokit)
 }
 
 run()
