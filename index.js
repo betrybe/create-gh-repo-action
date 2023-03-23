@@ -6,6 +6,10 @@ const repo = core.getInput('repo_name')
 const ghToken = core.getInput('admin_token')
 const containerImageTemplate = core.getInput('container_image_template') == "Default" ? "Dockerfile" : core.getInput('container_image_template')
 
+if (!repo.match(/^([a-z0-9]([-a-z0-9]*[a-z0-9])?){1,32}$/)) {
+  core.setFailed(`O nome do repositório é inválido: ${repo}`)
+}
+
 const owner = github.context.payload.repository.owner.login
 
 const requestCreation = async (octokit) => {
@@ -102,11 +106,16 @@ const createWorkflowFiles = async (octokit) => {
 }
 
 const createRepo = async () => {
-  const octokit = new Octokit({auth: ghToken})
+  try {
+    const octokit = new Octokit({ auth: ghToken })
 
-  await requestCreation(octokit)
-  await createEnvs(octokit)
-  await createWorkflowFiles(octokit)
+    await requestCreation(octokit)
+    await createEnvs(octokit)
+    await createWorkflowFiles(octokit)
+  }
+  catch (error) {
+    core.setFailed(error.message)
+  }
 }
 
 createRepo()
