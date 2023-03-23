@@ -12060,7 +12060,7 @@ const createEnv = async (octokit, environment_name) => {
 const cloneFile = async (octokit, path, message) => {
   const fileContent = await octokit.rest.repos.getContent({
     owner,
-    repo: 'template-reactjs',
+    repo: 'infrastructure-templates',
     path,
     ref: 'main',
     mediaType: {
@@ -12095,32 +12095,32 @@ const createEnvs = async (octokit) => {
 const createWorkflowFiles = async (octokit) => {
   await cloneFile(
     octokit,
-    `.github/workflows/build-sync.yaml`,
+    `github-cd-workflows-template/build-sync.yaml`,
     'Cria o workflow de build & sync'
   )
   await cloneFile(
     octokit,
-    `.github/workflows/production.yaml`,
+    `github-cd-workflows-template/production.yaml`,
     'Cria o workflow do CD de production'
   )
   await cloneFile(
     octokit,
-    `.github/workflows/staging.yaml`,
+    `github-cd-workflows-template/staging.yaml`,
     'Cria o workflow do CD de staging'
   )
   await cloneFile(
     octokit,
-    `.github/workflows/homologation.yaml`,
+    `github-cd-workflows-template/homologation.yaml`,
     'Cria o workflow do CD de homologation'
   )
   await cloneFile(
     octokit,
-    `.github/workflows/preview-apps.yaml`,
+    `github-cd-workflows-template/preview-apps.yaml`,
     'Cria o workflow do CD de preview-apps'
   )
   await cloneFile(
     octokit,
-    `Dockerfile`,
+    `dockerfiles-templates/Dockerfile`,
     'Cria dockerfile'
   )
 }
