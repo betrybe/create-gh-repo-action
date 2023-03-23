@@ -12027,15 +12027,25 @@ const core = __nccwpck_require__(2186)
 const github = __nccwpck_require__(5438)
 const { Octokit } = __nccwpck_require__(5375)
 
-// Inputs
 const repo = core.getInput('repo_name')
 const ghToken = core.getInput('admin_token')
 
-// Fixed
 const owner = github.context.payload.repository.owner.login
-const techOpsUser = {
-  name: 'trybe-tech-ops',
-  email: 'trybe-tech-ops@users.noreply.github.com'
+
+const requestCreation = async (octokit) => {
+  await octokit.request(
+    `POST /orgs/${owner}/repos`,
+    {
+      name: repo,
+      'private': true,
+      auto_init: true,
+      delete_branch_on_merge: true,
+      visibility: 'private'
+    }
+  )
+
+  console.log(`Repo ${owner}/${repo} created successfully!`)
+  core.setOutput("repo_url", `https://github.com/${owner}/${repo}`)
 }
 
 const createEnv = async (octokit, environment_name) => {
@@ -12060,29 +12070,20 @@ const cloneFile = async (octokit, path, message) => {
 
   const content = Buffer.from(fileContent.data.replace('APP_NAME', repo)).toString('base64')
 
-  await octokit.rest.repos.createOrUpdateFileContents({
+  await octokit.request(`PUT /repos/${owner}/${repo}/contents/${path}`, {
     owner,
     repo,
     path,
     message,
     content,
-    committer: techOpsUser,
-    author: techOpsUser
-  })
-}
-
-const requestCreation = async (octokit) => {
-  await octokit.request(
-    `POST /orgs/${owner}/repos`,
-    {
-      "name": repo,
-      "private": true,
-      "visibility": "private"
+    committer: {
+      name: 'trybe-tech-ops',
+      email: 'trybe-tech-ops@users.noreply.github.com'
+    },
+    headers: {
+      'X-GitHub-Api-Version': '2022-11-28'
     }
-  )
-
-  console.log(`Repo ${owner}/${repo} created successfully!`)
-  core.setOutput("repo_url", `https://github.com/${owner}/${repo}`)
+  })
 }
 
 const createEnvs = async (octokit) => {
@@ -12117,6 +12118,11 @@ const createWorkflowFiles = async (octokit) => {
     `.github/workflows/preview-apps.yaml`,
     'Cria o workflow do CD de preview-apps'
   )
+  await cloneFile(
+    octokit,
+    `Dockerfile`,
+    'Cria dockerfile'
+  )
 }
 
 const createRepo = async () => {
@@ -12128,6 +12134,7 @@ const createRepo = async () => {
 }
 
 createRepo()
+
 })();
 
 module.exports = __webpack_exports__;
