@@ -7,7 +7,7 @@ const repo = core.getInput('repo_name')
 const ghToken = core.getInput('admin_token')
 
 // Fixed
-const owner = github.context.payload.repository.owner.login;
+const owner = github.context.payload.repository.owner.login
 const techOpsUser = {
   name: 'trybe-tech-ops',
   email: 'trybe-tech-ops@users.noreply.github.com'
@@ -25,23 +25,28 @@ const createEnv = async (octokit, environment_name) => {
 const cloneFile = async (octokit, path, message) => {
   const fileContent = await octokit.rest.repos.getContent({
     owner,
-    repo: 'infrastructure-templates',
+    repo: 'template-reactjs',
     path,
-    ref: 'main'
-  });
+    ref: 'main',
+    mediaType: {
+      format: "raw"
+    }
+  })
 
-  octokit.rest.repos.createOrUpdateFileContents({
+  const content = Buffer.from(fileContent.data.replace('APP_NAME', repo)).toString('base64')
+
+  await octokit.rest.repos.createOrUpdateFileContents({
     owner,
     repo,
     path,
     message,
-    content: Buffer.from(fileContent).toString('base64'),
+    content,
     committer: techOpsUser,
     author: techOpsUser
   })
 }
 
-const createRepoRequest = async (octokit) => {
+const requestCreation = async (octokit) => {
   await octokit.request(
     `POST /orgs/${owner}/repos`,
     {
@@ -51,8 +56,8 @@ const createRepoRequest = async (octokit) => {
     }
   )
 
-  console.log(`Repo ${owner}/${repo} created successfully!`);
-  core.setOutput("repo_url", `https://github.com/${owner}/${repo}`);
+  console.log(`Repo ${owner}/${repo} created successfully!`)
+  core.setOutput("repo_url", `https://github.com/${owner}/${repo}`)
 }
 
 const createEnvs = async (octokit) => {
@@ -89,12 +94,12 @@ const createWorkflowFiles = async (octokit) => {
   )
 }
 
-const run = async () => {
+const createRepo = async () => {
   const octokit = new Octokit({auth: ghToken})
 
-  await createRepoRequest(octokit)
+  await requestCreation(octokit)
   await createEnvs(octokit)
   await createWorkflowFiles(octokit)
 }
 
-run()
+createRepo()
