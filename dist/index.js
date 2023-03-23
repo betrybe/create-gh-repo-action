@@ -12095,6 +12095,7 @@ const createEnvs = async (octokit) => {
   await createEnv(octokit, 'staging')
   await createEnv(octokit, 'homologation')
   await createEnv(octokit, 'production')
+  await createEnv(octokit, 'preview-app')
 }
 
 const createWorkflowFiles = async (octokit) => {

@@ -4,7 +4,7 @@ Action que cria um novo repositório no github com 4 ambientes e com worfklows d
 
 Usada quando uma nova aplicação é criada no https://github.com/betrybe/infrastructure-projects
 
-- Cria um repositório de mesmo nome do projeto
+- Cria um repositório de mesmo nome da aplicação
 - Cria 4 ambientes para secrets e variáveis (leia mais [aqui](https://docs.github.com/pt/actions/deployment/targeting-different-environments/using-environments-for-deployment))
   - `staging`
   - `homologation`
