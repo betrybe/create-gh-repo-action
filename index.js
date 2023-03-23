@@ -4,6 +4,7 @@ const { Octokit } = require('@octokit/rest')
 
 const repo = core.getInput('repo_name')
 const ghToken = core.getInput('admin_token')
+const containerImageTemplate = core.getInput('container_image_template') == "Default" ? "Dockerfile" : core.getInput('container_image_template')
 
 const owner = github.context.payload.repository.owner.login
 
@@ -95,7 +96,7 @@ const createWorkflowFiles = async (octokit) => {
   )
   await cloneFile(
     octokit,
-    `dockerfiles-templates/Dockerfile`,
+    `dockerfiles-templates/${containerImageTemplate}`,
     'Cria dockerfile'
   )
 }
