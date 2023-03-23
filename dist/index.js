@@ -12038,11 +12038,11 @@ const techOpsUser = {
   email: 'trybe-tech-ops@users.noreply.github.com'
 }
 
-const createEnv = async (octokit, environment) => {
+const createEnv = async (octokit, environment_name) => {
   await octokit.rest.repos.createOrUpdateEnvironment({
     owner,
     repo,
-    environment,
+    environment_name,
     deployment_branch_policy: null
   })
 }
@@ -12068,9 +12068,9 @@ const cloneFile = async (octokit, path, message) => {
 
 const createRepoRequest = async (octokit) => {
   await octokit.request(
-    `POST /https://api.github.com/orgs/${repo}/repos`,
+    `POST /orgs/${owner}/repos`,
     {
-      "name": owner,
+      "name": repo,
       "private": true,
       "visibility": "private"
     }
