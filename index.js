@@ -29,6 +29,7 @@ const requestCreation = async (octokit) => {
 }
 
 const createEnv = async (octokit, environment_name) => {
+  console.log(`Criando o ambiente ${environment_name} para ${owner}/${repo}`)
   await octokit.rest.repos.createOrUpdateEnvironment({
     owner,
     repo,
@@ -37,7 +38,9 @@ const createEnv = async (octokit, environment_name) => {
   })
 }
 
-const cloneFile = async (octokit, path, message) => {
+const cloneFile = async (octokit, path, newPath, message) => {
+  console.log(`Clonando ${path} de ${owner}/infrastructure-templates para ${newPath} em ${owner}/${repo}`)
+
   const fileContent = await octokit.rest.repos.getContent({
     owner,
     repo: 'infrastructure-templates',
@@ -50,10 +53,10 @@ const cloneFile = async (octokit, path, message) => {
 
   const content = Buffer.from(fileContent.data.replace('APP_NAME', repo)).toString('base64')
 
-  await octokit.request(`PUT /repos/${owner}/${repo}/contents/${path}`, {
+  await octokit.request(`PUT /repos/${owner}/${repo}/contents/${newPath}`, {
     owner,
     repo,
-    path,
+    path: newPath,
     message,
     content,
     committer: {
@@ -77,31 +80,37 @@ const createWorkflowFiles = async (octokit) => {
   await cloneFile(
     octokit,
     `github-cd-workflows-template/build-sync.yaml`,
+    `.github/workflows/build-sync.yaml`,
     'Cria o workflow de build & sync'
   )
   await cloneFile(
     octokit,
     `github-cd-workflows-template/production.yaml`,
+    `.github/workflows/production.yaml`,
     'Cria o workflow do CD de production'
   )
   await cloneFile(
     octokit,
     `github-cd-workflows-template/staging.yaml`,
+    `.github/workflows/staging.yaml`,
     'Cria o workflow do CD de staging'
   )
   await cloneFile(
     octokit,
     `github-cd-workflows-template/homologation.yaml`,
+    `.github/workflows/homologation.yaml`,
     'Cria o workflow do CD de homologation'
   )
   await cloneFile(
     octokit,
     `github-cd-workflows-template/preview-apps.yaml`,
+    `.github/workflows/preview-apps.yaml`,
     'Cria o workflow do CD de preview-apps'
   )
   await cloneFile(
     octokit,
     `dockerfiles-templates/${containerImageTemplate}`,
+    'Dockerfile',
     'Cria dockerfile'
   )
 }
