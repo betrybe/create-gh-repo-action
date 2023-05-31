@@ -53,7 +53,22 @@ const cloneFile = async (octokit, path, newPath, message) => {
 
   const content = Buffer.from(fileContent.data.replace('APP_NAME', repo)).toString('base64')
 
-  await octokit.request(`PUT /repos/${owner}/${repo}/contents/${newPath}`, {
+  // const res = await octokit.request(`PUT /repos/${owner}/${repo}/contents/${newPath}`, {
+  //   owner,
+  //   repo,
+  //   path: newPath,
+  //   message,
+  //   content,
+  //   committer: {
+  //     name: 'trybe-tech-ops',
+  //     email: 'trybe-tech-ops@users.noreply.github.com'
+  //   },
+  //   headers: {
+  //     'X-GitHub-Api-Version': '2022-11-28'
+  //   }
+  // })
+
+  const res = await octokit.repos.createOrUpdateFileContents({
     owner,
     repo,
     path: newPath,
@@ -63,10 +78,9 @@ const cloneFile = async (octokit, path, newPath, message) => {
       name: 'trybe-tech-ops',
       email: 'trybe-tech-ops@users.noreply.github.com'
     },
-    headers: {
-      'X-GitHub-Api-Version': '2022-11-28'
-    }
-  })
+  });
+
+  console.log(res)
 }
 
 const createEnvs = async (octokit) => {
@@ -119,11 +133,12 @@ const createRepo = async () => {
   try {
     const octokit = new Octokit({ auth: ghToken })
 
-    await requestCreation(octokit)
-    await createEnvs(octokit)
+    // await requestCreation(octokit)
+    // await createEnvs(octokit)
     await createWorkflowFiles(octokit)
   }
   catch (error) {
+    console.log(error)
     core.setFailed(error.message)
   }
 }
