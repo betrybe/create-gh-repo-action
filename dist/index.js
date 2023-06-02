@@ -12027,6 +12027,9 @@ const core = __nccwpck_require__(2186)
 const github = __nccwpck_require__(5438)
 const { Octokit } = __nccwpck_require__(5375)
 
+const owner = github.context.payload.repository.owner.login
+const author = github.context.payload.sender.login
+
 const repo = core.getInput('repo_name')
 const ghToken = core.getInput('admin_token')
 const containerImageTemplate = core.getInput('container_image_template') == "Default" ? "Dockerfile" : core.getInput('container_image_template')
@@ -12034,8 +12037,6 @@ const containerImageTemplate = core.getInput('container_image_template') == "Def
 if (!repo.match(/^([a-z0-9]([-a-z0-9]*[a-z0-9])?){1,32}$/)) {
   core.setFailed(`O nome do repositório é inválido: ${repo}`)
 }
-
-const owner = github.context.payload.repository.owner.login
 
 const requestCreation = async (octokit) => {
   await octokit.request(
@@ -12079,15 +12080,22 @@ const cloneFile = async (octokit, path, newPath, message) => {
   const content = Buffer.from(fileContent.data.replace('APP_NAME', repo)).toString('base64')
 
   await octokit.request(`PUT /repos/${owner}/${repo}/contents/${newPath}`, {
-    owner,
-    repo,
-    path: newPath,
     message,
     content,
     committer: {
       name: 'trybe-tech-ops',
       email: 'trybe-tech-ops@users.noreply.github.com'
     },
+    headers: {
+      'X-GitHub-Api-Version': '2022-11-28'
+    }
+  })
+}
+
+const addCollaborator = async (octokit, username, permission) => {
+  console.log(`Adicionando ${username} com permissão ${permission} em ${owner}/${repo}`)
+  await octokit.request(`PUT /repos/${owner}/${repo}/collaborators/${username}`, {
+    permission,
     headers: {
       'X-GitHub-Api-Version': '2022-11-28'
     }
@@ -12146,7 +12154,8 @@ const createRepo = async () => {
 
     await requestCreation(octokit)
     await createEnvs(octokit)
-    // await createWorkflowFiles(octokit)
+    await createWorkflowFiles(octokit)
+    await addCollaborator(octokit, author, 'admin')
   }
   catch (error) {
     console.log(error)
